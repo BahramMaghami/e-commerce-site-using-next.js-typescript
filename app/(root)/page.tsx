@@ -8,7 +8,7 @@ const Homepage = async () => {
       {' '}
       <ProductList
         data={latestProducts}
-        title="fhksjhfd"
+        title="Newest Arrivals"
         limit={4}
       ></ProductList>{' '}
     </>
