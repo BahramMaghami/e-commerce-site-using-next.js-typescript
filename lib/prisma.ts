@@ -1,11 +1,28 @@
-import 'dotenv/config'
-
+import { neonConfig } from '@neondatabase/serverless'
+import { PrismaNeon } from '@prisma/adapter-neon'
 import { PrismaClient } from '@/lib/generated/prisma/client'
-// Import the driver adapter for your specific database (example uses PostgreSQL)
-import { PrismaPg } from '@prisma/adapter-pg'
+import ws from 'ws'
 
-// Initialize the adapter according to your driver's requirements
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL })
+// Sets up WebSocket connections, which enables Neon to use WebSocket communication.
+neonConfig.webSocketConstructor = ws
+const connectionString = `${process.env.DATABASE_URL}`
 
-// Pass the adapter instance to PrismaClient
-export const prisma = new PrismaClient({ adapter })
+const adapter = new PrismaNeon({ connectionString })
+
+// Extends the PrismaClient with a custom result transformer to convert the price and rating fields to strings.
+export const prisma = new PrismaClient({ adapter }).$extends({
+  result: {
+    product: {
+      price: {
+        compute(product) {
+          return product.price.toString()
+        },
+      },
+      rating: {
+        compute(product) {
+          return product.rating.toString()
+        },
+      },
+    },
+  },
+})
