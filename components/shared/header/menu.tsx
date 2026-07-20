@@ -16,16 +16,16 @@ const Menu = () => {
       <nav className="hidden md:flex w-full max-w-xs gap-1">
         <ModeToggle />
         <Button variant="ghost">
-          <Link href="/cart" className="lg:flex lg:gap-1">
-            <ShoppingCart /> 
+          <Link href="/cart" className="flex gap-1">
+            <ShoppingCart />
+            Cart
           </Link>
-          Cart
         </Button>
         <Button>
-          <Link href="/cart" className="lg:flex lg:gap-1">
-            <UserIcon /> 
+          <Link href="/sign-in" className="flex gap-1">
+            <UserIcon />
+            Sign In
           </Link>
-          Sign In
         </Button>
       </nav>
       <nav className="md:hidden ">
