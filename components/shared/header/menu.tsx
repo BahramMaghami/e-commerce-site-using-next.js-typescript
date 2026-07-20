@@ -37,16 +37,16 @@ const Menu = () => {
             <SheetTitle>Menu</SheetTitle>
             <ModeToggle />
             <Button variant="ghost">
-              <Link href="/cart">
+              <Link href="/cart" className="flex gap-1">
                 <ShoppingCart />
+                Cart
               </Link>
-              Cart
             </Button>
             <Button>
-              <Link href="/cart" className="lg:flex lg:gap-1">
+              <Link href="/sign-in" className="flex gap-1">
                 <UserIcon />
+                Sign In
               </Link>
-              Sign In
             </Button>
             <SheetDescription></SheetDescription>
           </SheetContent>

@@ -14,7 +14,7 @@ export async function signInWithCredentials(
       email: formData.get('email'),
       password: formData.get('password'),
     })
-    await signIn('credentials', user)
+    await signIn('credentials', user) 
     return { success: true, message: 'Sign in successful' }
   } catch (error) {
     if (error instanceof AuthError) {

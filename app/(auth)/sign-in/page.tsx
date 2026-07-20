@@ -10,13 +10,21 @@ import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import CredentialsSignInForm from './credentials-signing-form'
+import { auth } from '@/auth'
+import { redirect } from 'next/navigation'
 
 export const metadata: Metadata = {
   title: 'Sign In',
   description: 'Sign in to your account',
 }
 
-const SignInPage = () => {
+const SignInPage = async () => {
+  
+  const session = await auth()
+  if (session) {
+    redirect('/')
+  }
+
   return (
     <div className="w-full max-w-md mx-auto">
       <Card>
