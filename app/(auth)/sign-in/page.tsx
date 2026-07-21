@@ -20,10 +20,10 @@ export const metadata: Metadata = {
 
 const SignInPage = async () => {
   
-  // const session = await auth()
-  // if (session) {
-  //   redirect('/')
-  // }
+  const session = await auth()
+  if (session) {
+    redirect('/')
+  }
 
   return (
     <div className="w-full max-w-md mx-auto">
