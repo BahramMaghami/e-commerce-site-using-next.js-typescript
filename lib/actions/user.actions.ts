@@ -1,11 +1,9 @@
 'use server'
-import { revalidatePath } from 'next/cache'
 import { signInFormSchema, signUpFormSchema } from '@/lib/validators'
 import { signIn, signOut } from '@/auth'
 import { AuthError } from 'next-auth'
 import { hashSync } from 'bcrypt-ts-edge'
 import { prisma } from '@/lib/prisma'
-import { redirect } from 'next/navigation'
 
 // Sign in the usere with credentials
 export async function signInWithCredentials(

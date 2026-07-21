@@ -6,9 +6,9 @@ import { Label } from '@/components/ui/label'
 import { signUpDefaultValues } from '@/lib/constants'
 import Link from 'next/link'
 import { singUpUser } from '@/lib/actions/user.actions'
-import { useActionState, useEffect } from 'react'
+import { useActionState } from 'react'
 import { useFormStatus } from 'react-dom'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 
 const SignUpButton = () => {
   const { pending } = useFormStatus()
