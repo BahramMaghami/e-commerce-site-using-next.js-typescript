@@ -1,11 +1,11 @@
 'use server'
-
+import { revalidatePath } from 'next/cache'
 import { signInFormSchema, signUpFormSchema } from '@/lib/validators'
 import { signIn, signOut } from '@/auth'
 import { AuthError } from 'next-auth'
 import { hashSync } from 'bcrypt-ts-edge'
 import { prisma } from '@/lib/prisma'
-import { success } from 'zod'
+import { redirect } from 'next/navigation'
 
 // Sign in the usere with credentials
 export async function signInWithCredentials(
@@ -65,9 +65,9 @@ export async function singUpUser(prevState: unknown, formData: FormData) {
     await signIn('credentials', {
       email: user.email,
       password: plainPassword,
+      redirectTo: '/',
     })
 
-    return { success: true, message: 'User registered successfully' }
   } catch (error) {
     if (error instanceof AuthError) {
       return {
@@ -75,5 +75,7 @@ export async function singUpUser(prevState: unknown, formData: FormData) {
         message: 'User was not registered',
       }
     }
+
+    throw error
   }
 }
