@@ -1,9 +1,9 @@
 'use server'
 import { signInFormSchema, signUpFormSchema } from '@/lib/validators'
 import { signIn, signOut } from '@/auth'
-import { AuthError } from 'next-auth'
 import { hashSync } from 'bcrypt-ts-edge'
 import { prisma } from '@/lib/prisma'
+import { isRedirectError } from 'next/dist/client/components/redirect-error'
 
 // Sign in the usere with credentials
 export async function signInWithCredentials(
@@ -18,14 +18,11 @@ export async function signInWithCredentials(
     await signIn('credentials', user)
     return { success: true, message: 'Sign in successful' }
   } catch (error) {
-    if (error instanceof AuthError) {
-      return {
-        success: false,
-        message: 'Invalid email or password',
-      }
+    if (isRedirectError(error)) {
+      throw error
     }
 
-    throw error
+    return { success: false, message: 'Invalid email or password' }
   }
 }
 
@@ -63,17 +60,12 @@ export async function singUpUser(prevState: unknown, formData: FormData) {
     await signIn('credentials', {
       email: user.email,
       password: plainPassword,
-      redirectTo: '/',
     })
-
   } catch (error) {
-    if (error instanceof AuthError) {
-      return {
-        success: false,
-        message: 'User was not registered',
-      }
+    if (isRedirectError(error)) {
+      throw error
     }
 
-    throw error
+    return { success: false, message: 'User was not registered!' }
   }
 }

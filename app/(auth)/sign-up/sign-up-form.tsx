@@ -44,7 +44,6 @@ const SignUpForm = () => {
             type="text"
             autoComplete="name"
             defaultValue={signUpDefaultValues.name}
-            required
           />
         </div>
         <div className="space-y-1">
@@ -52,10 +51,9 @@ const SignUpForm = () => {
           <Input
             id="email"
             name="email"
-            type="email"
+            type="text"
             autoComplete="email"
             defaultValue={signUpDefaultValues.email}
-            required
           />
         </div>
         <div className="space-y-1">
