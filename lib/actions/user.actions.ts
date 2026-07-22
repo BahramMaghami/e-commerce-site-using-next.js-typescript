@@ -4,6 +4,7 @@ import { signIn, signOut } from '@/auth'
 import { hashSync } from 'bcrypt-ts-edge'
 import { prisma } from '@/lib/prisma'
 import { isRedirectError } from 'next/dist/client/components/redirect-error'
+import { formatError } from '../utils'
 
 // Sign in the usere with credentials
 export async function signInWithCredentials(
@@ -62,10 +63,11 @@ export async function singUpUser(prevState: unknown, formData: FormData) {
       password: plainPassword,
     })
   } catch (error) {
+
     if (isRedirectError(error)) {
       throw error
     }
 
-    return { success: false, message: 'User was not registered!' }
+    return { success: false, message: formatError(error) }
   }
 }

@@ -12,6 +12,27 @@ export function convertToPlainObject<T>(value: T): T {
 
 // Format number with decimal places
 export function formatNumberWithDecimal(num: number): string {
-  const [int , decimal] =num.toString().split('.')
-  return decimal ? `${int}.${decimal.padEnd(2,'0')}` : `${int}.00`
+  const [int, decimal] = num.toString().split('.')
+  return decimal ? `${int}.${decimal.padEnd(2, '0')}` : `${int}.00`
+}
+
+// Format errors
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function formatError(error: any) {
+  if (error.name === 'ZodError') {
+    console.log(error.issues)
+    // Handle Zod error
+    const fieldErrors: string[] = error.issues.map((issue: {message: string}) => issue.message)
+
+    return fieldErrors.join('. ')
+  } else if (
+    error.name === 'PrismaClientKnownRequestError' &&
+    error.code === 'P2002'
+  ) {
+    const field = error.meta?.modelName ? error.meta?.modelName : 'Field'
+    return `${field.charAt(0).toUpperCase() + field.slice(1)} already exist`
+  }
+  else{
+    return typeof error.message === 'string' ? error.message : JSON.stringify(error.message)
+  }
 }
