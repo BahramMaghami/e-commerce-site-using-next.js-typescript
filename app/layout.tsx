@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { APP_NAME, SERVER_URL } from '@/lib/constants'
 import { NEXT_PUBLIC_APP_DESCRIPTION } from '@/lib/constants'
 import { ThemeProvider } from 'next-themes'
+import { Toaster } from '@/components/ui/sonner'
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' })
 
@@ -45,6 +46,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <Toaster/>
         </ThemeProvider>
       </body>
     </html>
