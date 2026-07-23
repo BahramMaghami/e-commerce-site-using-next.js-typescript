@@ -4,12 +4,16 @@ import { prisma } from './lib/prisma'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { compareSync } from 'bcrypt-ts-edge'
 import type { NextAuthConfig } from 'next-auth'
+import { cookies } from 'next/headers'
+import { NextResponse } from 'next/server'
+import authConfig from './auth.config'
 
 export const config = {
-  pages: {
-    signIn: '/sign-in',
-    error: '/sign-in',
-  },
+  // pages: {
+  //   signIn: '/sign-in',
+  //   error: '/sign-in',
+  // },
+  ...authConfig,
   session: {
     strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -63,7 +67,6 @@ export const config = {
       session.user.role = token.role
       session.user.name = token.name
 
-
       // if there is a update to the user name, update the session object
       if (trigger === 'update') {
         session.user.name = user.name
@@ -89,6 +92,19 @@ export const config = {
         }
       }
       return token
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    authorized({ request, auth }: any) {
+      // Check for session cart cookie
+      if (!request.cookies.get('sessionCartId')) {
+        // Generate new session cart id cookie
+        const sessionCartId = crypto.randomUUID()
+
+        console.log(sessionCartId)
+        return true
+      } else {
+        return true
+      }
     },
   },
 } satisfies NextAuthConfig
