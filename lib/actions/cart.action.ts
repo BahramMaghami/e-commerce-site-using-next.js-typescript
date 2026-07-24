@@ -7,7 +7,6 @@ import { auth } from '@/auth'
 import { prisma } from '../prisma'
 import { cartItemSchema, insertCartSchema } from '../validators'
 import { revalidatePath } from 'next/cache'
-import { CartScalarFieldEnum } from '../generated/prisma/internal/prismaNamespace'
 import { Prisma } from '../generated/prisma/client'
 
 // Calculate cart prices
