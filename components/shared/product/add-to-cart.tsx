@@ -13,7 +13,7 @@ const AddToCart = ({ item }: { item: CartItem }) => {
   const handleAddToCart = async () => {
     const res = await addItemToCart(item)
 
-    if (!res.success) {
+    if (res && !res.success) {
       toast.error(res.message, {
         className: '!bg-red-500',
       })
