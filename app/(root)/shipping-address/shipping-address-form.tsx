@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import { useTransition } from 'react'
 import { shippingAddressSchema } from '@/lib/validators'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, useForm, SubmitHandler } from 'react-hook-form'
 import z from 'zod'
 import { shippingAddressDefaultValues } from '@/lib/constants'
 import {
@@ -27,6 +27,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Loader } from 'lucide-react'
+import { updateUserAddress } from '@/lib/actions/user.actions'
 
 const ShippingAddressForm = ({ address }: { address: ShippingAddress }) => {
   const router = useRouter()
@@ -39,20 +40,20 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress }) => {
 
   const [isPending, startTransition] = useTransition()
 
-  function onSubmit(data: z.infer<typeof shippingAddressSchema>) {
-    toast('You submitted the following values:', {
-      description: (
-        <pre className="mt-2 w-[320px] overflow-x-auto rounded-md bg-code p-4 text-code-foreground">
-          <div>fullName: {data.fullName}</div>
-        </pre>
-      ),
-      position: 'bottom-right',
-      classNames: {
-        content: 'flex flex-col gap-2',
-      },
-      style: {
-        '--border-radius': 'calc(var(--radius)  + 4px)',
-      } as React.CSSProperties,
+  const onSubmit: SubmitHandler<z.infer<typeof shippingAddressSchema>> = async (
+    data: z.infer<typeof shippingAddressSchema>,
+  ) => {
+    startTransition(async () => {
+      const res = await updateUserAddress(data)
+
+      if (!res.success) {
+        toast.error(res.message, {
+          className: '!bg-red-500',
+        })
+        return
+      }
+
+      router.push('/payment-method')
     })
   }
 
