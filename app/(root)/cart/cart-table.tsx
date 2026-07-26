@@ -114,15 +114,15 @@ const CartTable = ({ cart }: { cart?: Cart }) => {
           </div>
 
           <Card>
-            <CardContent className="p-4 gap-4">
-              <div className="pb-3 text-xl">
+            <CardContent className="p-4 gap-12 my-auto flex-col justify-center items-center">
+              <div className="pb-3 text-xl self-center">
                 Subtotal ({cart.items.reduce((a, c) => a + c.qty, 0)}):
-                <span className="font-bold">
+                <span className="font-bold ml-3">
                   {formatCurrency(cart.itemsPrice)}
                 </span>
               </div>
               <Button
-                className="w-full"
+                className="w-full self-center"
                 disabled={isPending}
                 onClick={() =>
                   startTransition(() => router.push('/shipping-address'))
