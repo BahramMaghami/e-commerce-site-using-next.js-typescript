@@ -11,7 +11,7 @@ import { prisma } from '@/lib/prisma'
 import { isRedirectError } from 'next/dist/client/components/redirect-error'
 import { formatError } from '../utils'
 import { ShippingAddress } from '@/types'
-import z, { success } from 'zod'
+import z from 'zod'
 
 // Sign in the usere with credentials
 export async function signInWithCredentials(
