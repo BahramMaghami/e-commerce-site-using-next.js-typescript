@@ -91,7 +91,7 @@ export const paymentMethodSchema = z
   })
 
 // Schema for inserting order
-export const inserOrderSchema = z.object({
+export const insertOrderSchema = z.object({
   userId: z.string().min(1, 'User is required'),
   itemsPrice: currency,
   shippingPrice: currency,
@@ -100,7 +100,7 @@ export const inserOrderSchema = z.object({
   paymentMethod: z.string().refine((data) => PAYMENT_METHODS?.includes(data), {
     message: 'Invalid payment method',
   }),
-  shippinAddress: shippingAddressSchema,
+  shippingAddress: shippingAddressSchema,
 })
 
 // Schema for inserting order item
