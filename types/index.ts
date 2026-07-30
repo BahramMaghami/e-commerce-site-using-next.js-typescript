@@ -3,7 +3,7 @@ import {
   insertCartSchema,
   cartItemSchema,
   shippingAddressSchema,
-  inserOrderSchema,
+  insertOrderSchema,
   insertOrderItemSchema,
 } from '@/lib/validators'
 import z from 'zod'
@@ -18,7 +18,7 @@ export type Cart = z.infer<typeof insertCartSchema>
 export type CartItem = z.infer<typeof cartItemSchema>
 export type ShippingAddress = z.infer<typeof shippingAddressSchema>
 export type OrderItem = z.infer<typeof insertOrderItemSchema>
-export type Order = z.infer<typeof inserOrderSchema> & {
+export type Order = z.infer<typeof insertOrderSchema> & {
   createdAt: Date
   isPaid: boolean
   paidAt: Date | null
