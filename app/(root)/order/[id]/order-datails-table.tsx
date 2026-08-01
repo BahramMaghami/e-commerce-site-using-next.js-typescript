@@ -9,7 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { getOrderById } from '@/lib/actions/order.actions'
 import { formatCurrency, formatDateTime, formatId } from '@/lib/utils'
 import { Order } from '@/types'
 import Link from 'next/link'
