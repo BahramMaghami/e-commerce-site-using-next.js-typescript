@@ -2,6 +2,8 @@ import { POST } from '@/app/api/auth/[...nextauth]/route'
 
 const base = process.env.PAYPAL_API_URL || 'https://api-m.sandbox.paypal.com'
 
+console.log(base)
+
 export const paypal = {}
 
 // Generate access token
@@ -28,3 +30,5 @@ async function generateAccessToken() {
     throw new Error(errorMessega)
   }
 }
+
+export { generateAccessToken }
