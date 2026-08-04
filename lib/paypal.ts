@@ -1,6 +1,3 @@
-import { POST } from '@/app/api/auth/[...nextauth]/route'
-import { currency } from './validators'
-
 const base = process.env.PAYPAL_API_URL || 'https://api-m.sandbox.paypal.com'
 
 console.log(base)
@@ -38,8 +35,8 @@ export const paypal = {
     const response = await fetch(url, {
       method: 'POST',
       headers: {
-        'Content-type': 'application/json',
-        Authorizaion: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
       },
     })
     return handleResponse(response)
