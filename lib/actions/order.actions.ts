@@ -12,6 +12,7 @@ import { paypal } from '../paypal'
 import { revalidatePath } from 'next/cache'
 import { PAGE_SIZE } from '../constants'
 import { Prisma } from '../generated/prisma/client'
+import { totalmem } from 'node:os'
 
 // Create order and create the order items
 export async function createOrder() {
@@ -342,5 +343,28 @@ export async function getOrderSummary() {
     totalSales,
     latestSales,
     salesData,
+  }
+}
+
+// Get all orders
+export async function getAllOrders({
+  limit = PAGE_SIZE,
+  page,
+}: {
+  limit?: number
+  page: number
+}) {
+  const data = await prisma.order.findMany({
+    orderBy: { createdAt: 'desc' },
+    take: limit,
+    skip: (page - 1) * limit,
+    include: { user: { select: { name: true } } },
+  })
+
+  const dataCount = await prisma.order.count()
+
+  return {
+    data,
+    totalPages: Math.ceil(dataCount / limit),
   }
 }
