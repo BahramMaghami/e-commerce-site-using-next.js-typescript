@@ -72,6 +72,7 @@ const AdminOrdersPage = async (props: {
                     size={'sm'}
                     render={<Link href={`/order/${order.id}`}>Details</Link>}
                   />
+
                   <DeleteDiolog id={order.id} action={deleteOrder} />
                 </TableCell>
               </TableRow>
