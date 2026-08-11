@@ -70,6 +70,7 @@ const AdminOrdersPage = async (props: {
                   <Button
                     variant={'outline'}
                     size={'sm'}
+                    nativeButton={false}
                     render={<Link href={`/order/${order.id}`}>Details</Link>}
                   />
 
