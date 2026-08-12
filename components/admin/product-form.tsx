@@ -75,11 +75,11 @@ const ProductForm = ({
       const res = await updateProduct({ ...values, id: productId })
 
       if (!res.success) {
-        toast(res.message)
-      } else {
         toast.error(res.message, {
           className: '!bg-red-500',
         })
+      } else {
+        toast(res.message)
         router.push('/admin/products')
       }
     }
