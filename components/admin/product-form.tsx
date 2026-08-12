@@ -1,11 +1,11 @@
 'use client'
 
 import { productDefaultValues } from '@/lib/constants'
-import { insertProductsSchema, updateProductSchema } from '@/lib/validators'
+import { insertProductsSchema } from '@/lib/validators'
 import { Product } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import z from 'zod'
 import {
@@ -22,6 +22,10 @@ import {
   InputGroupText,
   InputGroupTextarea,
 } from '../ui/input-group'
+import slugify from 'slugify'
+import { Button } from '../ui/button'
+import { Textarea } from '../ui/textarea'
+import { createProduct, updateProduct } from '@/lib/actions/product.action'
 
 const ProductForm = ({
   type,
@@ -34,86 +38,243 @@ const ProductForm = ({
 }) => {
   const router = useRouter()
 
+  type ProductFormInput = z.input<typeof insertProductsSchema>
+  type ProductFormOutput = z.output<typeof insertProductsSchema>
+
   const form = useForm<z.infer<typeof insertProductsSchema>>({
-    resolver:
-      type === 'Create'
-        ? zodResolver(insertProductsSchema)
-        : zodResolver(updateProductSchema),
+    resolver: zodResolver(insertProductsSchema),
     defaultValues:
       product && type === 'Update' ? product : productDefaultValues,
   })
 
-  const onSubmit = () => {}
+  const onSubmit: SubmitHandler<ProductFormInput> = async (values) => {
+    // On Create
+    if (type === 'Create') {
+      const res = await createProduct(values)
+
+      if (!res.success) {
+        toast(res.message)
+      } else {
+        toast.error(res.message, {
+          className: '!bg-red-500',
+        })
+        router.push('/admin/products')
+      }
+    }
+    // On Update
+    if (type === 'Update') {
+      if (!productId) {
+        router.push('/admin/products')
+        return
+      }
+
+      const res = await updateProduct({ ...values, id: productId })
+
+      if (!res.success) {
+        toast(res.message)
+      } else {
+        toast.error(res.message, {
+          className: '!bg-red-500',
+        })
+        router.push('/admin/products')
+      }
+    }
+  }
 
   return (
-    <form id="form-rhf-demo" onSubmit={form.handleSubmit(onSubmit)}>
+    <form
+      id="form-rhf-demo"
+      method="POST"
+      onSubmit={form.handleSubmit(onSubmit)}
+    >
       <FieldGroup>
-        <Controller
-          name="title"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="form-rhf-demo-title">Bug Title</FieldLabel>
-              <Input
-                {...field}
-                id="form-rhf-demo-title"
-                aria-invalid={fieldState.invalid}
-                placeholder="Login button not working on mobile"
-                autoComplete="off"
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-        <Controller
-          name="description"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="form-rhf-demo-description">
-                Description
-              </FieldLabel>
-              <InputGroup>
-                <InputGroupTextarea
-                  {...field}
-                  id="form-rhf-demo-description"
-                  placeholder="I'm having an issue with the login button on mobile."
-                  rows={6}
-                  className="min-h-24 resize-none"
-                  aria-invalid={fieldState.invalid}
-                />
-                <InputGroupAddon align="block-end">
-                  <InputGroupText className="tabular-nums">
-                    {field.value.length}/100 characters
-                  </InputGroupText>
-                </InputGroupAddon>
-              </InputGroup>
-              <FieldDescription>
-                Include steps to reproduce, expected behavior, and what actually
-                happened.
-              </FieldDescription>
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
         <div className="flex flex-col md:flex-row gap-5">
           {/* Name */}
+          <Controller
+            name="name"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="w-full">
+                <FieldLabel htmlFor="form-rhf-demo-name">Name</FieldLabel>
+                <Input
+                  {...field}
+                  id="form-rhf-demo-name"
+                  aria-invalid={fieldState.invalid}
+                  placeholder="Enter product name"
+                  autoComplete="off"
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
           {/* Slug */}
+          <Controller
+            name="slug"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="w-full">
+                <FieldLabel htmlFor="form-rhf-demo-slug">Slug</FieldLabel>
+                <div className="relative">
+                  <Input
+                    {...field}
+                    id="form-rhf-demo-slug"
+                    aria-invalid={fieldState.invalid}
+                    placeholder="Enter slug"
+                    autoComplete="off"
+                  />
+                  <Button
+                    type="button"
+                    className={
+                      'bg-gray-500 hover:bg-gray-600 text-white px-4 py-4 mt-2'
+                    }
+                    onClick={() => {
+                      form.setValue(
+                        'slug',
+                        slugify(form.getValues('name'), { lower: true }),
+                      )
+                    }}
+                  >
+                    Generate
+                  </Button>
+                </div>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
         </div>
         <div className="flex flex-col md:flex-row gap-5">
           {/* Category */}
+          <Controller
+            name="category"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="w-full">
+                <FieldLabel htmlFor="form-rhf-demo-category">
+                  Category
+                </FieldLabel>
+                <Input
+                  {...field}
+                  id="form-rhf-demo-category"
+                  aria-invalid={fieldState.invalid}
+                  placeholder="Enter category"
+                  autoComplete="off"
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
           {/* Brand */}
+          <Controller
+            name="brand"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="w-full">
+                <FieldLabel htmlFor="form-rhf-demo-brand">Brand</FieldLabel>
+                <Input
+                  {...field}
+                  id="form-rhf-demo-brand"
+                  aria-invalid={fieldState.invalid}
+                  placeholder="Enter brand"
+                  autoComplete="off"
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
         </div>
         <div className="flex flex-col md:flex-row gap-5">
           {/* Price */}
+          <Controller
+            name="price"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="w-full">
+                <FieldLabel htmlFor="form-rhf-demo-price">Price</FieldLabel>
+                <Input
+                  {...field}
+                  id="form-rhf-demo-price"
+                  aria-invalid={fieldState.invalid}
+                  placeholder="Enter product price"
+                  autoComplete="off"
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
           {/* Stock */}
+          <Controller
+            name="stock"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="w-full">
+                <FieldLabel htmlFor="form-rhf-demo-stock">Stock</FieldLabel>
+                <Input
+                  {...field}
+                  type="number"
+                  id="form-rhf-demo-stock"
+                  value={field.value ?? ''}
+                  onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                  aria-invalid={fieldState.invalid}
+                  placeholder="Enter the stock"
+                  autoComplete="off"
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
         </div>
         <div className="upload-field flex flex-col md:flex-row gap-5">
           {/* Imges */}
         </div>
         <div className="upload-field">{/* isFeatured */}</div>
-        <div>{/* Description */}</div>
-        <div>{/* Submit */}</div>
+        <div>
+          {/* Description */}
+          <Controller
+            name="description"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="w-full">
+                <FieldLabel htmlFor="form-rhf-demo-description">
+                  Description
+                </FieldLabel>
+                <Textarea
+                  {...field}
+                  id="form-rhf-demo-description"
+                  aria-invalid={fieldState.invalid}
+                  placeholder="Enter product description"
+                  autoComplete="off"
+                  className="resize-none"
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+        </div>
+        <div>
+          {/* Submit */}
+          <Button
+            type="submit"
+            size={'lg'}
+            disabled={form.formState.isSubmitting}
+            className={'button col-span-2 w-full'}
+          >
+            {form.formState.isSubmitting ? 'Submitting' : `${type} Product`}
+          </Button>
+        </div>
       </FieldGroup>
     </form>
   )

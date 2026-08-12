@@ -4,7 +4,7 @@ import { prisma } from '../prisma'
 import { convertToPlainObject, formatError } from '@/lib/utils'
 import { LATEST_PRODUCTS_LIMIT, PAGE_SIZE } from '../constants'
 import { revalidatePath } from 'next/cache'
-import { insertProductsSchema, updateProductSchema } from '../validators'
+import { insertProductsSchema } from '../validators'
 import z from 'zod'
 
 export async function getLatestProducts() {
@@ -36,6 +36,7 @@ export async function getAllProducts({
   category?: string
 }) {
   const data = await prisma.product.findMany({
+    orderBy: { createdAt: 'desc' },
     skip: (page - 1) * limit,
     take: limit,
   })
@@ -90,9 +91,11 @@ export async function createProduct(
 }
 
 // Update a product
-export async function updateProduct(data: z.infer<typeof updateProductSchema>) {
+export async function updateProduct(
+  data: z.infer<typeof insertProductsSchema>,
+) {
   try {
-    const product = updateProductSchema.parse(data)
+    const product = insertProductsSchema.parse(data)
     const productExists = await prisma.product.findFirst({
       where: { id: product.id },
     })
