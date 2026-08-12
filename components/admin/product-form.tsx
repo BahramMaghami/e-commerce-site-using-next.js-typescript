@@ -53,11 +53,11 @@ const ProductForm = ({
       const res = await createProduct(values)
 
       if (!res.success) {
-        toast(res.message)
-      } else {
         toast.error(res.message, {
           className: '!bg-red-500',
         })
+      } else {
+        toast(res.message)
         router.push('/admin/products')
       }
     }

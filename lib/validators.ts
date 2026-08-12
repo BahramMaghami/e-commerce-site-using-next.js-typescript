@@ -23,10 +23,7 @@ export const insertProductsSchema = z.object({
   // banner: z.string().nullable(),
   price: z
     .string()
-    .refine(
-      (value) => /^\+(\.\d{2})?$/.test(formatNumberWithDecimal(Number(value))),
-      'Price must have exactly two decimal places',
-    ),
+    .regex(/^\d+\.\d{2}$/, 'Price must have exactly two decimal places'),
 })
 
 // schema for signing users in
