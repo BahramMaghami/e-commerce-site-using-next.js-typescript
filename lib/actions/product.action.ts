@@ -44,13 +44,28 @@ export async function getAllProducts({
   page: number
   category?: string
 }) {
+  const where = {
+    name: {
+      contains: query,
+      mode: 'insensitive' as const,
+    },
+    ...(category
+      ? {
+          category,
+        }
+      : {}),
+  }
+
   const data = await prisma.product.findMany({
+    where,
     orderBy: { createdAt: 'desc' },
     skip: (page - 1) * limit,
     take: limit,
   })
 
-  const dataCount = await prisma.product.count()
+  const dataCount = await prisma.product.count({
+    where,
+  })
 
   return {
     data,
