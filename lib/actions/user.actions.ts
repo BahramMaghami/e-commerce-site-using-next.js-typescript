@@ -205,6 +205,6 @@ export async function deleteUser(id: string) {
       message: 'User deleted successfully',
     }
   } catch (error) {
-    return { succes: false, message: formatError(error) }
+    return { success: false, message: formatError(error) }
   }
 }

@@ -62,7 +62,6 @@ const AdminUserPage = async (props: {
                     nativeButton={false}
                     render={<Link href={`/admin/user/${user.id}`}>Edit</Link>}
                   />
-
                   <DeleteDiolog id={user.id} action={deleteUser} />
                 </TableCell>
               </TableRow>
