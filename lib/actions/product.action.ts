@@ -6,6 +6,7 @@ import { LATEST_PRODUCTS_LIMIT, PAGE_SIZE } from '../constants'
 import { revalidatePath } from 'next/cache'
 import { insertProductsSchema } from '../validators'
 import z from 'zod'
+import { da } from 'zod/v4/locales'
 
 export async function getLatestProducts() {
   const data = await prisma.product.findMany({
@@ -149,4 +150,15 @@ export async function getAllCategories() {
   })
 
   return data
+}
+
+// Get feature products
+export async function getFeatureProducts() {
+  const data = await prisma.product.findMany({
+    where: { isFeatured: true },
+    orderBy: { createdAt: 'desc' },
+    take: 4,
+  })
+
+  return convertToPlainObject(data)
 }
