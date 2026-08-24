@@ -21,7 +21,7 @@ const Search = async () => {
             <SelectValue placeholder="All" />
           </SelectTrigger>
           <SelectContent className={'mt-12'}>
-            <SelectItem key={'All'} value={'all'}>
+            <SelectItem key={'All'} value={''}>
               All
             </SelectItem>
             {categories.map((x) => (
