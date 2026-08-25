@@ -6,6 +6,8 @@ import { notFound } from 'next/navigation'
 import ProductImages from '@/components/shared/product/product-images'
 import AddToCart from '@/components/shared/product/add-to-cart'
 import { getMyCart } from '@/lib/actions/cart.action'
+import ReviewList from './review-list'
+import { auth } from '@/auth'
 
 const ProductDetailPage = async (props: {
   params: Promise<{ slug: string }>
@@ -17,6 +19,9 @@ const ProductDetailPage = async (props: {
   if (!product) {
     notFound()
   }
+
+  const session = await auth()
+  const userId = session?.user?.id
 
   const cart = await getMyCart()
 
@@ -87,6 +92,14 @@ const ProductDetailPage = async (props: {
             </Card>
           </div>
         </div>
+      </section>
+      <section className="mt-10">
+        <h2 className="h2-bold">Customer Reviews</h2>
+        <ReviewList
+          userId={userId || ''}
+          productId={product.id}
+          productSlug={product.slug}
+        />
       </section>
     </>
   )
