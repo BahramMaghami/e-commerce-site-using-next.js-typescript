@@ -5,8 +5,9 @@ import { convertToPlainObject, formatError } from '@/lib/utils'
 import { LATEST_PRODUCTS_LIMIT, PAGE_SIZE } from '../constants'
 import { revalidatePath } from 'next/cache'
 import { insertProductsSchema } from '../validators'
-import z from 'zod'
+import z, { gte } from 'zod'
 import { da } from 'zod/v4/locales'
+import { Prisma } from '../generated/prisma/client'
 
 export async function getLatestProducts() {
   const data = await prisma.product.findMany({
@@ -51,16 +52,39 @@ export async function getAllProducts({
   rating?: string
   sort?: string
 }) {
+  // Price filter
+  const priceFilter: Prisma.ProductWhereInput =
+    price && price !== 'all'
+      ? {
+          price: {
+            gte: Number(price.split('-')[0]),
+            lte: Number(price.split('-')[1]),
+          },
+        }
+      : {}
+
+  // Rating filter
+  const ratingFilter =
+    rating && rating !== 'all'
+      ? {
+          rating: {
+            gte: Number(rating),
+          },
+        }
+      : {}
+
   const where = {
     name: {
       contains: query,
       mode: 'insensitive' as const,
     },
-    ...(category
+    ...(category && category !== 'all'
       ? {
           category,
         }
       : {}),
+    ...priceFilter,
+    ...ratingFilter,
   }
 
   const data = await prisma.product.findMany({
