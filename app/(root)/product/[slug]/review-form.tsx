@@ -29,9 +29,10 @@ import { insertReviewSchema } from '@/lib/validators'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { StarIcon } from 'lucide-react'
 import { useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import z from 'zod'
+import { createUpdateReview } from '@/lib/actions/review.action'
 
 const ReviewForm = ({
   userId,
@@ -40,7 +41,7 @@ const ReviewForm = ({
 }: {
   userId: string
   productId: string
-  onReviewSubmitted?: () => void
+  onReviewSubmitted: () => void
 }) => {
   const [open, setOpen] = useState(false)
 
@@ -49,8 +50,30 @@ const ReviewForm = ({
     defaultValues: reviewFormDefaultValues,
   })
 
+  // Open form handler
   const handleOpenForm = () => {
+    form.setValue('productId', productId)
+    form.setValue('userId', userId)
+
     setOpen(true)
+  }
+
+  // Submit form handler
+  const onSubmit: SubmitHandler<z.infer<typeof insertReviewSchema>> = async (
+    values,
+  ) => {
+    const res = await createUpdateReview({ ...values, productId })
+
+    if (!res.success)
+      return toast.error(res.message, {
+        className: '!bg-red-500',
+      })
+
+    setOpen(false)
+
+    onReviewSubmitted()
+
+    toast(res.message)
   }
 
   return (
@@ -59,7 +82,7 @@ const ReviewForm = ({
         Write a Review
       </Button>
       <DialogContent className={'sm:max-w-[425px]'}>
-        <form method="post">
+        <form method="post" onSubmit={form.handleSubmit(onSubmit)}>
           <DialogHeader>
             <DialogTitle>Write a Review</DialogTitle>
             <DialogDescription className={''}>
@@ -126,7 +149,7 @@ const ReviewForm = ({
                     </SelectTrigger>
                     <SelectContent>
                       {Array.from({ length: 5 }).map((_, index) => (
-                        <SelectItem key={index} value={(index + 1).toString()}>
+                        <SelectItem key={index} value={index + 1}>
                           {index + 1} <StarIcon className="inline h-4 w-4" />
                         </SelectItem>
                       ))}
