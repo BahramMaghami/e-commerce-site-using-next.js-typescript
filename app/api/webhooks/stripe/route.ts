@@ -14,16 +14,16 @@ export async function POST(req: NextRequest) {
   if (event.type === 'charge.succeeded') {
     const { object } = event.data
 
-    // Update order status
-    await updateOrderToPaid({
-      orderId: object.metadata.orderId,
-      paymentResult: {
-        id: object.id,
-        status: 'COMPLETED',
-        email_address: object.billing_details.email!,
-        pricePaid: (object.amount / 100).toFixed(),
-      },
-    })
+    // // Update order status
+    // await updateOrderToPaid({
+    //   orderId: object.metadata.orderId,
+    //   paymentResult: {
+    //     id: object.id,
+    //     status: 'COMPLETED',
+    //     email_address: object.billing_details.email!,
+    //     pricePaid: (object.amount / 100).toFixed(),
+    //   },
+    // })
 
     return NextResponse.json({
       message: 'updateOrderToPaid was successful',
