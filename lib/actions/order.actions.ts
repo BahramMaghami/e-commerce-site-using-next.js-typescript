@@ -284,15 +284,18 @@ export async function updateOrderToPaid({
   // })
 
   console.log(updatedOrder.id)
-  await fetch('/api/send', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
+  await fetch(
+    'https://e-commerce-site-using-next-js-types.vercel.app/api/send',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        orderId: updatedOrder.id,
+      }),
     },
-    body: JSON.stringify({
-      orderId: updatedOrder.id,
-    }),
-  })
+  )
 }
 
 // Get the users orders
