@@ -14,7 +14,7 @@ import { PAGE_SIZE } from '../constants'
 import { Prisma } from '../generated/prisma/client'
 import { totalmem } from 'node:os'
 import { success } from 'zod'
-import { sendPurchaseReceipt } from '@/email'
+import { sendPurchaseReceipt } from './email.actions'
 
 // Create order and create the order items
 export async function createOrder() {
@@ -284,18 +284,13 @@ export async function updateOrderToPaid({
   // })
 
   console.log(updatedOrder.id)
-  await fetch(
-    'https://e-commerce-site-using-next-js-types.vercel.app/api/send',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        orderId: updatedOrder.id,
-      }),
+  await sendPurchaseReceipt({
+    order: {
+      ...updatedOrder,
+      shippingAddress: updatedOrder.shippingAddress as ShippingAddress,
+      paymentResult: updatedOrder.paymentResult as PaymentResult,
     },
-  )
+  })
 }
 
 // Get the users orders
