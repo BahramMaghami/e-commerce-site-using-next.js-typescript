@@ -30,6 +30,12 @@ export type Order = z.infer<typeof insertOrderSchema> & {
   deliveredAt: Date | null
   orderitems: OrderItem[]
   user: { name: string; email: string }
+  paymentResult?: {
+    id: string
+    status: string
+    pricePaid: string
+    email_address: string
+  }
 }
 export type PaymentResult = z.infer<typeof paymentResultSchema>
 export type Review = z.infer<typeof insertReviewSchema> & {

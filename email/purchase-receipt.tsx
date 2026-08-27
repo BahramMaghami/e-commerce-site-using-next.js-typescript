@@ -15,11 +15,59 @@ import {
 
 import { Order } from '@/types'
 import { formatCurrency } from '@/lib/utils'
-import { ifError } from 'node:assert'
+import sampleData from '@/db/sample-data'
+import 'dotenv/config'
+
+PurchaseReceiptEmail.PreviewProps = {
+  order: {
+    id: '123',
+    userId: '123',
+    user: {
+      name: 'John doe',
+      email: 'test@test.com',
+    },
+    paymentMethod: 'Stripe',
+    shippingAddress: {
+      fullName: 'John doe',
+      streetAddress: '123 Main st',
+      city: 'New York',
+      postalCode: '10001',
+      country: 'US',
+    },
+    createdAt: new Date(),
+    totalPrice: '100',
+    taxPrice: '10',
+    shippingPrice: '10',
+    itemsPrice: '80',
+    orderitems: sampleData.products.map((x) => ({
+      name: x.name,
+      orderId: '123',
+      productId: '123',
+      slug: x.slug,
+      qty: x.stock,
+      image: x.images[0],
+      price: x.price.toString(),
+    })),
+    isDelivered: true,
+    deliveredAt: new Date(),
+    isPaid: true,
+    paidAt: new Date(),
+    paymentResult: {
+      id: '123',
+      status: 'succeeded',
+      pricePaid: '100',
+      email_address: 'test@test.com',
+    },
+  },
+} satisfies OrderInformationProps
 
 const dateFormatter = new Intl.DateTimeFormat('en', { dateStyle: 'medium' })
 
-const PurchaseReceiptEmail = ({ order }: { order: Order }) => {
+export type OrderInformationProps = {
+  order: Order
+}
+
+export default function PurchaseReceiptEmail({ order }: OrderInformationProps) {
   return (
     <Html>
       <Preview>View order receipt</Preview>
@@ -34,7 +82,7 @@ const PurchaseReceiptEmail = ({ order }: { order: Order }) => {
                   <Text className="mb-0 mr-4 text-gray-500 whitespace-nowrap text-nowrap">
                     Order ID
                   </Text>
-                  <Text className="mt-0 mr-4">{order.id.toString()}</Text>
+                  <Text className="mt-0 mr-4">{order.id}</Text>
                 </Column>
                 <Column>
                   <Text className="mb-0 mr-4 text-gray-500 whitespace-nowrap text-nowrap">
@@ -64,7 +112,7 @@ const PurchaseReceiptEmail = ({ order }: { order: Order }) => {
                       className="rounded"
                       src={
                         item.image.startsWith('/')
-                          ? `${process.env.NEXT_PUBLIC_SERVER_URL}`
+                          ? `${process.env.NEXT_PUBLIC_SERVER_URL}${item.image}`
                           : item.image
                       }
                     />
@@ -97,5 +145,3 @@ const PurchaseReceiptEmail = ({ order }: { order: Order }) => {
     </Html>
   )
 }
-
-export default PurchaseReceiptEmail
