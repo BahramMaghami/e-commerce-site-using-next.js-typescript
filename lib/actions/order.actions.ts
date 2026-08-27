@@ -7,13 +7,14 @@ import { getMyCart } from './cart.action'
 import { getUserById } from './user.actions'
 import { insertOrderSchema } from '../validators'
 import { prisma } from '../prisma'
-import { CartItem, PaymentResult } from '@/types'
+import { CartItem, PaymentResult, ShippingAddress } from '@/types'
 import { paypal } from '../paypal'
 import { revalidatePath } from 'next/cache'
 import { PAGE_SIZE } from '../constants'
 import { Prisma } from '../generated/prisma/client'
 import { totalmem } from 'node:os'
 import { success } from 'zod'
+import { sendPurchaseReceipt } from '@/email'
 
 // Create order and create the order items
 export async function createOrder() {
@@ -258,7 +259,7 @@ export async function updateOrderToPaid({
   })
 
   // Get updated order after transaction
-  const updateOrder = await prisma.order.findFirst({
+  const updatedOrder = await prisma.order.findFirst({
     where: {
       id: orderId,
     },
@@ -270,7 +271,28 @@ export async function updateOrderToPaid({
     },
   })
 
-  if (!updateOrder) throw new Error('Order not found')
+  console.log(updatedOrder)
+
+  if (!updatedOrder) throw new Error('Order not found')
+
+  // const message = await sendPurchaseReceipt({
+  //   order: {
+  //     ...updatedOrder,
+  //     shippingAddress: updatedOrder.shippingAddress as ShippingAddress,
+  //     paymentResult: updatedOrder.paymentResult as PaymentResult,
+  //   },
+  // })
+
+  console.log(updatedOrder.id)
+  await fetch('/api/send', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      orderId: updatedOrder.id,
+    }),
+  })
 }
 
 // Get the users orders
