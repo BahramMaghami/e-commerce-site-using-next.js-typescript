@@ -5,6 +5,7 @@ import {
 } from '@/lib/actions/product.action'
 import ProductCarousel from '@/components/shared/product/product-carousel'
 import ViewAllProductsButton from '@/components/view-all-products'
+import IconBoxes from '@/components/icon-boxes'
 
 const Homepage = async () => {
   const latestProducts = await getLatestProducts()
@@ -19,6 +20,7 @@ const Homepage = async () => {
         limit={4}
       ></ProductList>{' '}
       <ViewAllProductsButton />
+      <IconBoxes />
     </>
   )
 }
