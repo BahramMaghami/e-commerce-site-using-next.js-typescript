@@ -6,6 +6,7 @@ import {
 import ProductCarousel from '@/components/shared/product/product-carousel'
 import ViewAllProductsButton from '@/components/view-all-products'
 import IconBoxes from '@/components/icon-boxes'
+import DealCountdown from '@/components/deal-countdown'
 
 const Homepage = async () => {
   const latestProducts = await getLatestProducts()
@@ -20,6 +21,7 @@ const Homepage = async () => {
         limit={4}
       ></ProductList>{' '}
       <ViewAllProductsButton />
+      <DealCountdown />
       <IconBoxes />
     </>
   )

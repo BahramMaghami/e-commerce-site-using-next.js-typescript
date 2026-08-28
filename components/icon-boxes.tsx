@@ -14,13 +14,6 @@ const IconBoxes = () => {
             </div>
           </div>
           <div className="space-y-2">
-            <ShoppingBag />
-            <div className="text-sm font-bold">Free Shipping</div>
-            <div className="text-sm text-muted-foreground">
-              Free shipping on orders above $100
-            </div>
-          </div>
-          <div className="space-y-2">
             <DollarSign />
             <div className="text-sm font-bold">Money Back Guarantee</div>
             <div className="text-sm text-muted-foreground">
